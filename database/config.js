@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+// jcUser
+// 5ntkozV7TTdhOAlW
+// mongodb+srv://jcUser:*****@cluster0.xovqe.mongodb.net/hospitaldb
+
 
 const dbConnection = async () => {
 
