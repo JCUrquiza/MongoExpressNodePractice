@@ -5,13 +5,33 @@ const { generarJWT } = require('../helpers/jwt');
 
 const getUsuarios = async (req, res) => {
 
+    // Paginación
+    // Guardamos en constante el parámetro que llega de la url
+    // Más adelante implementamos las funciones .skip y .limit
+    const desde = Number(req.query.desde) || 0;
+    
     // Dame todos los usuarios:
-    const usuarios = await Usuario.find({}, 'nombre email role google');
+    /* const usuarios = await Usuario
+        .find({}, 'nombre email role google')
+        .skip( desde )
+        .limit( 5 );
+
+    const total = await Usuario.count(); */
+
+    // Metemos las dos funciones en una promesa para que se ejecuten de manera asíncrona
+    const [ usuarios, total ] = await Promise.all([
+        Usuario
+            .find({}, 'nombre email role google img')
+            .skip( desde )
+            .limit( 5 ),
+        Usuario.countDocuments()
+    ]);
 
     res.status(200).json({
         ok: true,
         usuarios,
-        uid: req.uid
+        // uid: req.uid
+        total
     })
 
 }
