@@ -83,7 +83,7 @@ const retornaImagen = (req, res = response) => {
         const pathImg = path.join( __dirname, `../uploads/no-img.jpg` );
         res.sendFile(pathImg);
     }
-
+    
 
 }
 
