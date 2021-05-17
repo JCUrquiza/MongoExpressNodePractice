@@ -1,4 +1,4 @@
-const { response } = require('express');
+const { response, json } = require('express');
 const Hospital = require('../models/hospital');
 
 
@@ -43,21 +43,81 @@ const crearHospital = async ( req, res = response ) => {
 
 }
 
-const actualizarHospital = ( req, res = response ) => {
+const actualizarHospital = async ( req, res = response ) => {
 
-    res.status(200).json({
-        ok: true,
-        msg: 'Actualizando hospitales'
-    });
+    const id = req.params.id;
+    const uid = req.uid;
+
+    try{
+
+        const hospital = await Hospital.findById( id );
+
+        if ( !hospital ) {
+            return res.status(404).json({
+                ok: true,
+                msg: 'Ese hospital no existe'
+            });
+        }
+
+        // hospital.nombre = req.body.nombre;
+        const cambiosHospital = {
+            ...req.body,
+            usuario: uid
+        };
+
+        const hospitalActualizado = await Hospital.findByIdAndUpdate( id, cambiosHospital, {new: true});
+
+        res.status(200).json({
+            ok: true,
+            msg: 'Actualizando hospitales',
+            hospitalActualizado
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el admin'
+        });
+
+    }
 
 }
 
-const borrarHospital = ( req, res = response ) => {
+const borrarHospital = async ( req, res = response ) => {
 
-    res.status(200).json({
-        ok: true,
-        msg: 'Borrar hospitales'
-    });
+    const id = req.params.id;
+    
+    try{
+
+        const hospital = Hospital.findById( id );
+
+        if ( !hospital ) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'Hospital no encontrado en la BBDD'
+            });
+        }
+
+        await Hospital.findByIdAndDelete( id );
+
+        res.status(200).json({
+            ok: true,
+            msg: 'Hospital eliminado'
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(200).json({
+            ok: true,
+            msg: 'Borrar hospitales'
+        });
+
+    }
 
 }
 
